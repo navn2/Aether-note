@@ -507,7 +507,7 @@ class DashboardScreen extends ConsumerWidget {
 
     if (note == null) {
       final db = ref.read(databaseProvider);
-      final id = await db.insertNote(drift.NotesCompanion(
+      final id = await db.insertNote(NotesCompanion(
         title: const drift.Value('Untitled Note'),
         content: const drift.Value(''),
         createdAt: drift.Value(DateTime.now()),
