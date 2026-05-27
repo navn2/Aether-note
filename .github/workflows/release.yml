@@ -1,0 +1,61 @@
+name: Build and Release Aether Note
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers workflow on tag pushes like v1.0.0, v1.1.0 etc.
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows Executable
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Flutter SDK
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run SQLite Code Generator
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Enable Windows support
+        run: flutter config --enable-windows-desktop
+
+      - name: Build Windows Release Application
+        run: flutter build windows --release
+
+      - name: Create Zip Archive of Windows Build
+        run: |
+          powershell Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath AetherNote-Windows-Portable.zip
+
+      - name: Create GitHub Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: AetherNote-Windows-Portable.zip
+          draft: false
+          prerelease: false
+          name: Release ${{ github.ref_name }}
+          body: |
+            ## 🌌 Aether Note Release ${{ github.ref_name }}
+            
+            Welcome to the official downloadable release of **Aether Note**! 
+            
+            ### 📦 Download Instructions (Windows):
+            1. Download `AetherNote-Windows-Portable.zip` below.
+            2. Extract the folder contents to your computer.
+            3. Run `note_taking_app.exe` to launch the app offline instantly.
+            
+            *All database configurations (`my_notes.sqlite`) are stored locally inside your computer's standard application documents directory.*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
