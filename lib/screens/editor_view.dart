@@ -47,7 +47,9 @@ class _EditorViewState extends ConsumerState<EditorView> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.note?.title ?? '');
+    final initialTitle = widget.note?.title ?? '';
+    _titleController = TextEditingController(
+        text: initialTitle == 'Untitled Note' ? '' : initialTitle);
     _contentController = TextEditingController(text: widget.note?.content ?? '');
     _tagInputController = TextEditingController();
 

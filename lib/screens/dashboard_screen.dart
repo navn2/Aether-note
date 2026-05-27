@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:drift/drift.dart' as drift;
 import '../main.dart';
 import '../data/database.dart';
 import '../providers/notes_provider.dart';
@@ -500,19 +501,53 @@ class DashboardScreen extends ConsumerWidget {
   }
 
   // --- LAYOUT ACTION: Open/Select Note ---
-  void _openNoteEditor(BuildContext context, WidgetRef ref, Note? note) {
+  void _openNoteEditor(BuildContext context, WidgetRef ref, Note? note) async {
     final mediaQuery = MediaQuery.of(context);
     final isDesktop = mediaQuery.size.width >= 900;
 
-    if (isDesktop) {
-      ref.read(activeNoteProvider.notifier).state = note;
-    } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => EditorView(note: note),
-        ),
+    if (note == null) {
+      final db = ref.read(databaseProvider);
+      final id = await db.insertNote(drift.NotesCompanion(
+        title: const drift.Value('Untitled Note'),
+        content: const drift.Value(''),
+        createdAt: drift.Value(DateTime.now()),
+        updatedAt: drift.Value(DateTime.now()),
+      ));
+
+      final newNote = Note(
+        id: id,
+        title: 'Untitled Note',
+        content: '',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        isPinned: false,
+        color: 0,
+        tags: null,
       );
+
+      if (isDesktop) {
+        ref.read(activeNoteProvider.notifier).state = newNote;
+      } else {
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EditorView(note: newNote),
+            ),
+          );
+        }
+      }
+    } else {
+      if (isDesktop) {
+        ref.read(activeNoteProvider.notifier).state = note;
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => EditorView(note: note),
+          ),
+        );
+      }
     }
   }
 }
