@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Flutter SDK
         uses: subosito/flutter-action@v2
@@ -37,10 +37,10 @@ jobs:
 
       - name: Create Zip Archive of Windows Build
         run: |
-          powershell Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath AetherNote-Windows-Portable.zip
+          powershell -Command "$path = 'build/windows/x64/runner/Release'; if (-not (Test-Path $path)) { $path = 'build/windows/runner/Release' }; Compress-Archive -Path \"$path/*\" -DestinationPath AetherNote-Windows-Portable.zip"
 
       - name: Create GitHub Release and Upload Assets
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: AetherNote-Windows-Portable.zip
           draft: false
