@@ -26,11 +26,41 @@ A premium, **local-first**, markdown-powered cross-platform notes application de
 Aether Note is engineered around local reliability and reactive programming patterns:
 
 ```mermaid
-graph TD
-    UI[Flutter Widget Tree] -->|Read / Listen| Riverpod[Riverpod State Store]
-    Riverpod -->|Query Streams| DB[Drift SQLite Database]
-    UI -->|Keystroke Debouncer| DB
-    DB -->|Application Documents| LocalStorage[(my_notes.sqlite)]
+flowchart TD
+    %% Custom Styling
+    classDef presStyle fill:#0F172A,stroke:#38BDF8,stroke-width:2px,color:#F8FAFC;
+    classDef stateStyle fill:#1E1B4B,stroke:#818CF8,stroke-width:2px,color:#F8FAFC;
+    classDef dbStyle fill:#1C1917,stroke:#F59E0B,stroke-width:2px,color:#F8FAFC;
+    classDef diskStyle fill:#064E3B,stroke:#34D399,stroke-width:2px,color:#F8FAFC;
+
+    subgraph Presentation ["🎨 Presentation Layer"]
+        UI["📱 Flutter Material 3 App"]:::presStyle
+        Editor["✍️ Dual Markdown Editor"]:::presStyle
+    end
+
+    subgraph BusinessLogic ["🧠 State & Business Logic"]
+        Riverpod["🌊 Riverpod State Store"]:::stateStyle
+        Debounce["⚡ Debounced Auto-Saver"]:::stateStyle
+    end
+
+    subgraph Database ["🗄️ Drift SQLite Layer"]
+        Drift["🚀 Drift DAO & Models"]:::dbStyle
+        DB[("📂 Local SQLite DB")]:::diskStyle
+    end
+
+    %% Interactions & Data Flow
+    UI -->|1. Listen to Streams| Riverpod
+    Editor -->|2. Buffer Keypresses| Debounce
+    Debounce -->|3. Save Keystrokes| Drift
+    Riverpod -->|4. Push Live Queries| Drift
+    Drift -->|5. Disk I/O Operations| DB
+
+    %% Custom Link Styling
+    linkStyle 0 stroke:#38BDF8,stroke-width:2px,stroke-dasharray: 5 5;
+    linkStyle 1 stroke:#F43F5E,stroke-width:2px;
+    linkStyle 2 stroke:#F59E0B,stroke-width:2px;
+    linkStyle 3 stroke:#818CF8,stroke-width:2px;
+    linkStyle 4 stroke:#34D399,stroke-width:3px;
 ```
 
 *   **UI/Presentation**: Declarative layout using **Flutter** and **Material 3**. Includes custom premium typography using the Google Fonts **Outfit** design.
