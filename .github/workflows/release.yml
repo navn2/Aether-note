@@ -36,8 +36,13 @@ jobs:
         run: flutter build windows --release
 
       - name: Create Zip Archive of Windows Build
+        shell: powershell
         run: |
-          powershell -Command "$path = 'build/windows/x64/runner/Release'; if (-not (Test-Path $path)) { $path = 'build/windows/runner/Release' }; Compress-Archive -Path \"$path/*\" -DestinationPath AetherNote-Windows-Portable.zip"
+          $buildPath = "build/windows/x64/runner/Release"
+          if (-not (Test-Path $buildPath)) {
+              $buildPath = "build/windows/runner/Release"
+          }
+          Compress-Archive -Path "$buildPath\*" -DestinationPath AetherNote-Windows-Portable.zip
 
       - name: Create GitHub Release and Upload Assets
         uses: softprops/action-gh-release@v2
