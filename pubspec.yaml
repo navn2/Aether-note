@@ -1,0 +1,41 @@
+name: note_taking_app
+description: A local-first Windows note taking app.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # State Management (Riverpod v3)
+  flutter_riverpod: ^3.0.3
+  
+  # Database (Drift & SQLite)
+  drift: ^2.14.1
+  sqlite3_flutter_libs: ^0.5.18 # CRITICAL: Contains the Windows .dll files
+  path_provider: ^2.1.2         # Finds "My Documents"
+  path: ^1.8.3
+
+  # Fonts & Formatting
+  google_fonts: ^6.2.0
+  intl: ^0.19.0
+
+  # Markdown rendering
+  flutter_markdown: ^0.7.3
+
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  
+  # Code Generators (Drift needs these to write SQL for you)
+  build_runner: ^2.4.8
+  drift_dev: ^2.14.1
+
+flutter:
+  uses-material-design: true
