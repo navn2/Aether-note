@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # State Management (Riverpod v3)
-  flutter_riverpod: ^3.0.3
+  # State Management (Riverpod v2)
+  flutter_riverpod: ^2.5.1
   
   # Database (Drift & SQLite)
   drift: ^2.14.1
